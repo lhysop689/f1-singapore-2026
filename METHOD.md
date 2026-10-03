@@ -55,6 +55,7 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 **Caveats.**
 - Speed is sampled about 4 times per second, so a single corner's minimum can be off by 1–2 km/h. Averaging over many corners and sessions smooths this out.
 - Minimum speed does not capture how quickly a car accelerates out of a corner.
+- The Spanish GP qualifying (Round 14, the new Madrid circuit) is excluded. FastF1's corner map for that track is unavailable, though car telemetry exists. The metric uses the remaining sessions.
 
 ## Metric 3: Tyre degradation
 
