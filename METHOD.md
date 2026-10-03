@@ -31,7 +31,8 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 - Sprints are included because a Sprint has no required pit stop, so it is almost purely a test of holding position. That is the closest 2026 equivalent to Singapore's own Sprint.
 
 **Caveats.**
-- Front-runners have little room to gain places.
+- Raw places gained is structurally biased by starting position. A car starting near the back can only gain, and is promoted whenever cars ahead retire; a car on pole can only lose. Raw net places gained correlates 0.94 (Spearman) with a team's average grid position. The adjusted version compares each driver with the average places gained from the same grid slot (slots pooled in pairs) to remove this.
+- The 2026 results give every starter a grid slot from 1 to 22, so pit-lane starts cannot be identified separately. They appear at the back of the grid.
 - Counting only finishers ignores reliability, so a team that retires often is not penalised here.
 
 ## Metric 2: Slow-corner speed
@@ -55,6 +56,11 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 **Caveats.**
 - Speed is sampled about 4 times per second, so a single corner's minimum can be off by 1–2 km/h. Averaging over many corners and sessions smooths this out.
 - Minimum speed does not capture how quickly a car accelerates out of a corner.
+- **Telemetry cleaning:**
+  - **Corner location:** corners are found by track-map position (X/Y), not by distance along the lap. FastF1's distance is integrated from speed and drifts by up to ~3% per lap, enough to put a "corner" reading on the following straight.
+  - **Frozen readings:** the 2026 speed channel sometimes stalls for up to about 1 second, holding one value (for example 305 km/h through a braking zone). Corner readings with 3 or more identical consecutive speed samples are dropped. This is about 8% of slow-corner readings, spread evenly across teams (5–11%).
+  - **Outliers:** readings more than 30 km/h from the median of the other teams at that corner are dropped.
+  - **Coverage:** a corner is used only if at least 8 teams have valid readings.
 - The Spanish GP qualifying (Round 14, the new Madrid circuit) is excluded. FastF1's corner map for that track is unavailable, though car telemetry exists. The metric uses the remaining sessions.
 
 ## Metric 3: Tyre degradation

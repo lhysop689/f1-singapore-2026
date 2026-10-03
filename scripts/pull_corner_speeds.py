@@ -3,9 +3,13 @@
 For Qualifying (Q) and Sprint Qualifying (SQ) of every completed 2026 round,
 takes each team's fastest lap twice -- over the whole session (LapSet='all')
 and over the first knockout part only (LapSet='Q1', where every car runs) --
-and records the minimum telemetry speed within +-WINDOW_M of each corner
-marker. Saves data/raw/{round}_{Q|SQ}_corners.parquet. Re-runnable: existing
-files are skipped.
+and records the minimum telemetry speed while the car is within RADIUS_M of
+each corner marker on the track map. Saves
+data/raw/{round}_{Q|SQ}_corners.parquet. Re-runnable: existing files are skipped.
+
+Corners are located by X/Y position, not by distance along the lap: FastF1's
+distance is integrated from speed and drifts (up to ~3% per lap), which put
+some corner windows on the following straight.
 
 Usage: python scripts/pull_corner_speeds.py
 """
@@ -14,6 +18,7 @@ import warnings
 from pathlib import Path
 
 import fastf1
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,21 +28,46 @@ fastf1.set_log_level(logging.ERROR)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 YEAR = 2026
-WINDOW_M = 60  # metres either side of the corner marker
+RADIUS_M = 60  # metres from the corner marker
+UNITS_PER_M = 10  # FastF1 position data is in 1/10 m
+FROZEN_RUN = 3  # identical consecutive speed samples that mark a stalled reading
 
 
 def corner_min_speeds(lap, corners):
-    tel = lap.get_car_data().add_distance()
+    tel = lap.get_telemetry()  # car data merged with X/Y position
+    x, y = tel["X"].to_numpy(), tel["Y"].to_numpy()
     rows = []
     for _, c in corners.iterrows():
-        near = tel[(tel["Distance"] > c["Distance"] - WINDOW_M)
-                   & (tel["Distance"] < c["Distance"] + WINDOW_M)]
+        dist = np.hypot(x - c["X"], y - c["Y"]) / UNITS_PER_M
+        # the stretch of samples around the closest pass, while still within
+        # RADIUS_M -- avoids picking up another part of the track that runs nearby
+        i0 = int(np.nanargmin(dist))
+        lo, hi = i0, i0
+        while lo > 0 and dist[lo - 1] <= RADIUS_M:
+            lo -= 1
+        while hi < len(dist) - 1 and dist[hi + 1] <= RADIUS_M:
+            hi += 1
+        window = tel.iloc[lo:hi + 1] if dist[i0] <= RADIUS_M else tel.iloc[0:0]
         rows.append({
             "Corner": f"{int(c['Number'])}{c['Letter'] or ''}",
-            "CornerDistance": float(c["Distance"]),
-            "MinSpeed": near["Speed"].min() if len(near) else None,
+            "ClosestM": round(float(dist[i0]), 1),
+            "Samples": len(window),
+            "MinSpeed": window["Speed"].min() if len(window) else None,
+            "Frozen": frozen_speed(window),
         })
     return rows
+
+
+def frozen_speed(window, run=FROZEN_RUN):
+    """True if the speed channel repeats one value for `run`+ consecutive car
+    samples in the window. The 2026 feed sometimes stalls for up to ~1 s, which
+    in a corner (where speed always changes) gives a false reading."""
+    speeds = window.loc[window["Source"] == "car", "Speed"].to_numpy()
+    longest = current = 1
+    for a, b in zip(speeds[:-1], speeds[1:]):
+        current = current + 1 if a == b else 1
+        longest = max(longest, current)
+    return bool(len(speeds) and longest >= run)
 
 
 def session_rows(s, rnd, ses):
