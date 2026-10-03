@@ -18,6 +18,7 @@ fastf1.set_log_level(logging.WARNING)
 
 YEAR = 2026
 SESSIONS = ["R", "Q"]
+SPRINT_SESSIONS = ["S", "SQ"]  # Sprint + Sprint Qualifying, sprint weekends only
 
 
 def completed_schedule():
@@ -41,7 +42,8 @@ def main():
 
     for _, ev in sched.iterrows():
         rnd, name = int(ev["RoundNumber"]), ev["EventName"]
-        for ses in SESSIONS:
+        sessions = SESSIONS + (SPRINT_SESSIONS if ev["EventFormat"] == "sprint_qualifying" else [])
+        for ses in sessions:
             laps_p = RAW / f"{rnd:02d}_{ses}_laps.parquet"
             res_p = RAW / f"{rnd:02d}_{ses}_results.parquet"
             if laps_p.exists() and res_p.exists():
