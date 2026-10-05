@@ -32,6 +32,20 @@ cells = [
     ("code", "dr_q1.pivot_table(index='Team', columns='Round', values='Deficit').round(1)"),
 ]
 
+cells += [
+    ("md", "## Metric 3: tyre degradation\n\nOne row per stint: the slope of lap time against tyre age, and that slope relative to the field average for the same session and compound (`RelSlope`, s/lap; lower is better). The GP races at Canada (Round 5) and Kuala Lumpur (Round 16) are excluded by default because both were mixed-weather, and a drying track gets faster lap by lap, which disguises wear."),
+    ("code", "from src.metrics import stint_rows, tyre_deg, clean_stint_laps\nimport numpy as np\nlaps = load('laps', {'R', 'S'})\nst = stint_rows(laps)\nprint(len(st), 'stints;', st['SessionType'].value_counts().to_dict())\nst['Slope'].describe().round(3)"),
+    ("md", "### Why most raw slopes are near zero or negative\nThe car burns roughly 1–2 kg of fuel per lap and gets lighter, so it speeds up through a stint; tyre wear slows it down. The raw slope is the net of the two. Comparing each stint with the field in the same session and compound cancels the fuel effect, which is roughly the same for every car."),
+    ("md", "### Hand check: one stint\nThe slope from the function should equal the textbook least-squares formula computed by hand."),
+    ("code", "row = st.sort_values('Laps', ascending=False).iloc[0]\ncl = clean_stint_laps(laps)\ng = cl[(cl.Round == row.Round) & (cl.Session == row.Session) & (cl.Driver == row.Driver) & (cl.Stint == row.Stint)]\nx, y = g['TyreLife'].to_numpy(float), g['LapS'].to_numpy()\nmanual = ((x - x.mean()) * (y - y.mean())).sum() / ((x - x.mean()) ** 2).sum()\nprint(f\"R{row.Round} {row.EventName} {row.Driver} stint {int(row.Stint)} ({row.Compound}, {len(g)} laps): function {row.Slope:.4f}, by hand {manual:.4f}\")"),
+    ("md", "### Team scores, with uncertainty\n`se` is the standard error of each team's mean. Two teams whose scores differ by less than about 2 × se can't really be told apart."),
+    ("code", "td = st.groupby('Team')['RelSlope'].agg(score='mean', se=lambda s: s.std() / np.sqrt(len(s)), n='size').sort_values('score')\ntd"),
+    ("md", "### Sensitivity: mixed-weather races and Sprints\nRanks under three versions. If a team's rank barely moves, its score is robust."),
+    ("code", "sens = pd.DataFrame({\n    'default': tyre_deg(laps)['score'],\n    'incl_mixed_weather': tyre_deg(laps, exclude_gp_rounds=[])['score'],\n    'gp_only': tyre_deg(laps[laps['Session'] == 'R'])['score'],\n}).rank().astype(int).sort_values('default')\nsens"),
+    ("md", "### Sensitivity: Sprints in the other two metrics\nRanks with and without Sprint sessions."),
+    ("code", "sens2 = pd.DataFrame({\n    'retention_all': retention(results, 'adjusted')['score'].rank(ascending=False),\n    'retention_gp_only': retention(results[results['Session'] == 'R'], 'adjusted')['score'].rank(ascending=False),\n    'corner_all': corner_deficit(corners, 'Q1')['score'].rank(),\n    'corner_gp_only': corner_deficit(corners[corners['Session'] == 'Q'], 'Q1')['score'].rank(),\n}).astype(int)\nsens2"),
+]
+
 nb = nbf.v4.new_notebook()
 nb["cells"] = [nbf.v4.new_markdown_cell(s) if t == "md" else nbf.v4.new_code_cell(s) for t, s in cells]
 out = Path(__file__).with_name("sanity.ipynb")

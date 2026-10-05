@@ -1,6 +1,6 @@
 # Method
 
-> **Draft (Oct 3, 2026).** The open decisions listed at the end are settled by Oct 6. This file is frozen with the scores in the `pre-race-snapshot` release on Oct 8, before the first Singapore session.
+> **Draft (updated Oct 5, 2026).** The open decisions listed at the end are settled by Oct 6. This file is frozen with the scores in the `pre-race-snapshot` release on Oct 8, before the first Singapore session.
 
 ## Question
 
@@ -18,7 +18,9 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 
 ## Metric 1: Position retention
 
-**Definition.** For each driver in each Grand Prix and Sprint: `GridPosition − ClassifiedPosition` (positive = places gained). Classified finishers only; pit-lane starts are excluded. The team score is the mean over all of its driver-sessions.
+**Definition.** For each classified driver in each Grand Prix and Sprint, places gained = `GridPosition − ClassifiedPosition`.
+
+That is then compared with the **expected** places gained: the average for all drivers who started from the same pair of grid slots (P1–2, P3–4, ...) across the season. The team score is the mean of (places gained − expected), over all of its driver-sessions. Higher is better.
 
 **Why it matters for Singapore.**
 - The track is narrow, lined with walls and has few overtaking spots. The race order tends to follow the starting order, and lost places are rarely regained.
@@ -37,10 +39,10 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 
 ## Metric 2: Slow-corner speed
 
-**Definition.** In each Qualifying and Sprint Qualifying session, take each team's fastest lap. Measure the car's minimum telemetry speed within ±60 m of every corner marker.
+**Definition.** In each Qualifying and Sprint Qualifying session, take each team's fastest lap **from the first knockout round (Q1 / SQ1)**. Every car runs that round, on the same tyre (Softs in Qualifying, Mediums in Sprint Qualifying) and in similar track conditions. Measure the car's minimum telemetry speed while it is within 60 m of each corner marker.
 - **Slow corners** are those where the median minimum speed across teams is below 120 km/h. The data picks them; there is no hand-picked list.
 - **Session score:** the team's average km/h deficit to the best team across those corners.
-- Sessions with fewer than 3 slow corners, and wet sessions, are excluded.
+- Sessions with fewer than 3 slow corners are excluded. No qualifying session in 2026 so far was wet.
 - **Team score:** the mean deficit across sessions (lower is better).
 
 **Why it matters for Singapore.**
@@ -61,7 +63,8 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
   - **Frozen readings:** the 2026 speed channel sometimes stalls for up to about 1 second, holding one value (for example 305 km/h through a braking zone). Corner readings with 3 or more identical consecutive speed samples are dropped. This is about 8% of slow-corner readings, spread evenly across teams (5–11%).
   - **Outliers:** readings more than 30 km/h from the median of the other teams at that corner are dropped.
   - **Coverage:** a corner is used only if at least 8 teams have valid readings.
-- The Spanish GP qualifying (Round 14, the new Madrid circuit) is excluded. FastF1's corner map for that track is unavailable, though car telemetry exists. The metric uses the remaining sessions.
+- Two qualifying sessions are excluded because FastF1's corner map for those tracks is unavailable (car telemetry exists): Round 14 (the new Madrid circuit) and Round 16 (Kuala Lumpur). The metric uses the remaining 18 sessions.
+- The choice of Q1 laps matters for some teams. Using each team's fastest lap of the whole session instead moves Audi from 3rd to 7th, for example. Q1 was chosen because whole-session laps mix tyre types in Sprint Qualifying and favour teams that reach the later, faster-track rounds.
 
 ## Metric 3: Tyre degradation
 
@@ -71,7 +74,7 @@ This is a **descriptive** analysis, not a race prediction. It scores each team o
 - marked accurate by FastF1
 - within 107% of the stint median
 
-Keep stints of at least 8 laps on dry tyres. The Canada GP (Round 5, mixed conditions) is excluded.
+Keep stints of at least 8 laps on dry tyres. The two mixed-weather Grands Prix are excluded: Canada (Round 5) and Kuala Lumpur (Round 16, wet start). A drying track gets faster lap by lap, which disguises tyre wear. The compound must also have at least 3 stints in that session for a field average to be meaningful.
 
 Fit a straight line of lap time (s) against tyre age (laps); its slope is the seconds lost per lap of wear. Subtract the field-average slope for the same session and tyre compound. The team score is the mean relative slope (lower is better).
 
@@ -88,6 +91,9 @@ Strategy (which tyres to use and when to pit) is a set of team decisions and is 
 **Caveats.**
 - Burning fuel makes the car faster during a stint, which partly hides wear. This affects all teams similarly, so rankings hold.
 - A driver deliberately saving tyres produces flat lap times. That can make a slow car look gentle on its tyres.
+- **Precision:** single stints are noisy. Each team's score averages 55–74 stints, with a standard error of about 0.005–0.013 s/lap.
+  - **The ends of the ranking are clear:** Mercedes and Racing Bulls are best, Cadillac worst, in every variant tested.
+  - **The midfield is not:** teams differ by less than their uncertainty, so midfield ranks on this metric should not be over-read.
 
 ## Sprints vs Grand Prix sessions
 
@@ -99,7 +105,9 @@ Data for both is pulled the same way; only the session code differs. Each metric
 | Slow-corner speed | Qualifying (mostly Soft tyres) | Sprint Qualifying (mostly Medium tyres); compared within the session, so the tyre difference cancels |
 | Tyre degradation | 2–3 stints, mixed tyres, heavy fuel at the start | One stint of about 17–24 laps, mostly Mediums, lighter fuel; compared within the session and compound |
 
-As a sensitivity check, the scores are recomputed without Sprints, and the difference is reported.
+As a sensitivity check, the scores were recomputed without Sprints:
+- **Retention and slow-corner speed:** no team's rank moved by more than 1 place, except Aston Martin in slow-corner speed (9th → 11th).
+- **Tyre degradation:** the top 3 and bottom 3 stayed the same teams. Midfield ranks moved by up to 3 places (Williams 5th → 8th).
 
 ## Scoring
 
@@ -125,6 +133,6 @@ With only 11 teams this is a directional check: |ρ| needs to be about 0.6 befor
 
 ## Open decisions (settled by Oct 6)
 
-- [ ] Retention: net places gained vs places lost only
-- [ ] Slow-corner speed: fastest lap from Q1 only vs the whole session
+- [x] Retention: grid-adjusted places gained (Oct 5), chosen over net and places-lost, which mostly track grid position
+- [x] Slow-corner speed: fastest lap from Q1 / SQ1 only (Oct 5)
 - [ ] Scoring: min-max vs rank scaling; equal weights
