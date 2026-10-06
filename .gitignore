@@ -4,3 +4,4 @@ data/raw/
 __pycache__/
 .ipynb_checkpoints/
 data/*.txt
+f1_handover.md

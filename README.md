@@ -2,7 +2,7 @@
 
 Scores each 2026 F1 team on three Singapore-relevant characteristics (quali-to-race position retention, low-speed sector pace, tyre degradation) using FastF1 season data. Pre-race scores are frozen on Oct 8, 2026, and compared with the actual Singapore GP result after Oct 11.
 
-Work in progress. Project context: [f1_handover.md](f1_handover.md).
+Work in progress. Method, decisions and limitations: [METHOD.md](METHOD.md).
 
 ## Setup
 ```
