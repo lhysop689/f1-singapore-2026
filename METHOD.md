@@ -133,6 +133,6 @@ With only 11 teams this is a directional check: |ρ| needs to be about 0.6 befor
 
 ## Open decisions (settled by Oct 6)
 
-- [x] Retention: grid-adjusted places gained (Oct 5), chosen over net and places-lost, which mostly track grid position
-- [x] Slow-corner speed: fastest lap from Q1 / SQ1 only (Oct 5)
+- [x] Retention: grid-adjusted places gained (confirmed Oct 6). Chosen over net and places-lost, whose team rankings correlate 0.87 and 0.86 (Spearman) with average grid position
+- [x] Slow-corner speed: fastest lap from Q1 / SQ1 only (confirmed Oct 6). Rank correlation with the whole-session alternative is 0.82; Audi and Red Bull move most
 - [ ] Scoring: min-max vs rank scaling; equal weights
