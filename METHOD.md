@@ -111,7 +111,25 @@ As a sensitivity check, the scores were recomputed without Sprints:
 
 ## Scoring
 
-Each metric is scaled 0–100 across the 11 teams (100 = best). The composite score is the equal-weight mean of the three.
+**Rank-based.** On each metric, teams are ranked 1st to 11th, and the rank is converted to a score: 1st = 100, 2nd = 90, ... 11th = 0. Tied teams share the higher rank. The **overall score** is the equal-weight mean of the three metric scores, so it is the average rank on a 0–100 scale.
+
+Why rank-based: in racing, finishing order is what counts, and ranks are the easiest to explain. The cost is that the size of the gaps is lost, so a narrow 2nd looks the same as a distant 2nd.
+
+Two other options were compared and rejected:
+- **Min-max** (best = 100, worst = 0, proportional in between): stretches small, mostly-noise gaps into large score differences.
+- **Uncertainty-aware shrinkage** (pull each team toward the average in proportion to its measurement noise): most statistically careful, but harder to explain.
+
+All three options give the same top 3 (Mercedes, Racing Bulls, Ferrari, order varies) and the same bottom 3 (Williams, Aston Martin, Cadillac). The middle five shuffle between options.
+
+**How reliable each metric is.** This is the estimated share of the between-team spread that is real signal rather than measurement noise:
+
+| Metric | Real signal |
+|---|---|
+| Slow-corner speed | ~76% |
+| Position retention | ~55% |
+| Tyre wear | ~39% |
+
+**Overlap between metrics.** Spearman correlations between the three metrics are 0.32–0.52, so each adds information and the overall score is not counting the same trait twice.
 
 ## Pre-registered post-race test
 
@@ -129,10 +147,20 @@ With only 11 teams this is a directional check: |ρ| needs to be about 0.6 befor
 - Scores describe the season so far and are not a prediction.
 - Safety cars, night conditions and Singapore's first Sprint weekend are not scored.
 - New 2026 telemetry (battery deployment, active-aero states) is not in the public feed.
-- Team-level scores hide differences between the two drivers.
+- **Team-level scores hide differences between the two drivers.** Most teammates are closely matched: the median gap in average qualifying position is 0.7 places. The most lopsided pairings in qualifying head-to-heads:
+
+  | Team | Head-to-head | Avg qualifying gap |
+  |---|---|---|
+  | Alpine | Gasly 12–4 Colapinto | 2.6 places |
+  | Red Bull | Verstappen 12–3 Hadjar | 2.2 places |
+  | Williams | Sainz 12–3 Albon | 1.6 places |
+  | Aston Martin | Alonso 12–2 Stroll | 1.4 places |
+
+  At those teams, the stronger driver can finish well above the team average. Team-level scores also include any substitute or swapped drivers: Lawson appears for both Red Bull and Racing Bulls this season, and Tsunoda for Racing Bulls.
+- Early-season races count the same as recent ones, although teams develop quickly under new rules.
 
 ## Open decisions (settled by Oct 6)
 
 - [x] Retention: grid-adjusted places gained (confirmed Oct 6). Chosen over net and places-lost, whose team rankings correlate 0.87 and 0.86 (Spearman) with average grid position
 - [x] Slow-corner speed: fastest lap from Q1 / SQ1 only (confirmed Oct 6). Rank correlation with the whole-session alternative is 0.82; Audi and Red Bull move most
-- [ ] Scoring: min-max vs rank scaling; equal weights
+- [x] Scoring: rank-based, equal weights (confirmed Oct 6)
