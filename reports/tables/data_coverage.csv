@@ -1,0 +1,17 @@
+Round,Event,Sprint weekend,GP laps,Lap time present %,Tyre info present %,Green-flag laps %,Wet tyres used,Classified finishers,Teams,Corner speeds (Q)
+1,Australian,False,1006,99,100,87,False,16,11,True
+2,Chinese,True,920,98,100,82,False,15,11,True
+3,Japanese,False,1107,98,100,87,False,20,11,True
+4,Miami,True,1040,99,100,82,False,18,11,True
+5,Canadian,True,1211,100,100,82,True,16,11,True
+6,Monaco,False,1452,97,100,83,False,16,11,True
+7,Barcelona,False,1236,100,100,92,False,17,11,True
+8,Austrian,False,1339,100,100,93,False,18,11,True
+9,British,True,1113,98,100,79,False,20,11,True
+10,Belgian,False,872,93,100,81,False,19,11,True
+11,Hungarian,False,1431,100,98,94,False,19,11,True
+12,Dutch,True,1368,97,100,87,False,17,11,True
+13,Italian,False,1054,94,100,91,False,19,11,True
+14,Spanish,False,1106,100,100,92,False,18,11,False
+15,Azerbaijan,False,981,91,100,74,False,16,11,True
+16,Bahrain,False,1145,91,95,65,True,20,11,False

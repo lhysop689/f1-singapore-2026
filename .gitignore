@@ -1,7 +1,12 @@
-﻿.venv/
+# Environment and caches (rebuildable)
+.venv/
 cache/
-data/raw/
 __pycache__/
+.pytest_cache/
 .ipynb_checkpoints/
-data/*.txt
+
+# Downloaded data (rebuilt by steps 1-2)
+data/
+
+# Private project notes (kept outside the repo)
 f1_handover.md
