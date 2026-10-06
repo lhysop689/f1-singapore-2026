@@ -111,15 +111,18 @@ As a sensitivity check, the scores were recomputed without Sprints:
 
 ## Scoring
 
-**Rank-based.** On each metric, teams are ranked 1st to 11th, and the rank is converted to a score: 1st = 100, 2nd = 90, ... 11th = 0. Tied teams share the higher rank. The **overall score** is the equal-weight mean of the three metric scores, so it is the average rank on a 0–100 scale.
+**Min-max.** On each metric, the best team scores 100, the worst scores 0, and every other team is placed in proportion to where its raw value falls between them. The **overall score** is the equal-weight mean of the three metric scores.
 
-Why rank-based: in racing, finishing order is what counts, and ranks are the easiest to explain. The cost is that the size of the gaps is lost, so a narrow 2nd looks the same as a distant 2nd.
+Why min-max: it is as easy to explain as ranks, and it keeps the size of the gaps. With these data, ranks would show Mercedes 10 points clear of 2nd, while min-max shows the top three are almost level (76, 74, 74), which is what the raw measurements say.
 
-Two other options were compared and rejected:
-- **Min-max** (best = 100, worst = 0, proportional in between): stretches small, mostly-noise gaps into large score differences.
-- **Uncertainty-aware shrinkage** (pull each team toward the average in proportion to its measurement noise): most statistically careful, but harder to explain.
+**Limitation:** scores are relative to this season's best and worst team. A single extreme team squeezes the others together; for example, Cadillac's tyre wear is far worse than anyone else's, pushing most teams into the 50–100 range on that metric. Small midfield gaps, especially in tyre wear, may be measurement noise rather than real differences.
 
-All three options give the same top 3 (Mercedes, Racing Bulls, Ferrari, order varies) and the same bottom 3 (Williams, Aston Martin, Cadillac). The middle five shuffle between options.
+Three other options were compared and rejected:
+- **Rank-based** (1st = 100, 2nd = 90, ...): hides gap size.
+- **Z-score** (distance from the average team in standard deviations): gives the same order as min-max but is harder for general readers.
+- **Uncertainty-aware shrinkage** (pull each team toward the average in proportion to its measurement noise): most statistically careful, but hardest to explain.
+
+All options give the same top 3 (Mercedes, Racing Bulls, Ferrari, order varies) and the same bottom 3 (Williams, Aston Martin, Cadillac). Between rank-based and min-max, only Red Bull and McLaren swap places (4th vs 6th).
 
 **How reliable each metric is.** This is the estimated share of the between-team spread that is real signal rather than measurement noise:
 
@@ -163,4 +166,4 @@ With only 11 teams this is a directional check: |ρ| needs to be about 0.6 befor
 
 - [x] Retention: grid-adjusted places gained (confirmed Oct 6). Chosen over net and places-lost, whose team rankings correlate 0.87 and 0.86 (Spearman) with average grid position
 - [x] Slow-corner speed: fastest lap from Q1 / SQ1 only (confirmed Oct 6). Rank correlation with the whole-session alternative is 0.82; Audi and Red Bull move most
-- [x] Scoring: rank-based, equal weights (confirmed Oct 6)
+- [x] Scoring: min-max, equal weights (confirmed Oct 6, replacing an earlier rank-based choice)

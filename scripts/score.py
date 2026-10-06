@@ -1,6 +1,6 @@
-"""Team scores: each metric's raw value, rank (1 = best) and rank-based score
-(1st = 100 ... 11th = 0), plus the overall score (equal-weight mean of the
-three). Writes outputs/scores.csv.
+"""Team scores: each metric's raw value, rank (1 = best) and min-max score
+(best team = 100, worst = 0, others in proportion), plus the overall score
+(equal-weight mean of the three). Writes outputs/scores.csv.
 
 Usage: python scripts/score.py
 """
@@ -31,9 +31,10 @@ def scores():
     for name, get in METRICS.items():
         raw, higher_better = get()
         rank = raw.rank(ascending=not higher_better, method="min").astype(int)
+        oriented = raw if higher_better else -raw
         cols[(name, "raw")] = raw
         cols[(name, "rank")] = rank
-        cols[(name, "score")] = 100 * (len(raw) - rank) / (len(raw) - 1)
+        cols[(name, "score")] = 100 * (oriented - oriented.min()) / (oriented.max() - oriented.min())
     df = pd.DataFrame(cols)
     df[("Overall", "score")] = df.xs("score", axis=1, level=1).mean(axis=1)
     df[("Overall", "rank")] = df[("Overall", "score")].rank(ascending=False, method="min").astype(int)
@@ -47,7 +48,7 @@ def main():
     flat.index.name = "Team"
     OUT.mkdir(exist_ok=True)
     flat.round(4).to_csv(OUT / "scores.csv")
-    show = df.xs("rank", axis=1, level=1).join(df[("Overall", "score")].rename("Overall score").round(1))
+    show = df.xs("score", axis=1, level=1).round(0).astype(int).join(df[("Overall", "rank")].rename("Overall rank"))
     print(show.to_string())
 
 
