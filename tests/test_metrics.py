@@ -98,3 +98,10 @@ def test_scores_span_0_to_100_and_overall_is_the_mean():
         assert s[col].min() == pytest.approx(0) and s[col].max() == pytest.approx(100)
     assert np.allclose(s["Overall score"], s[traits].mean(axis=1))
     assert len(s) == 11
+
+
+def test_palette_matches_official_team_colours(results):
+    from src.palette import TEAM_COLORS
+    latest = results[(results["Session"] == "R") & (results["Round"] == results["Round"].max())]
+    official = {t: f"#{c}".upper() for t, c in zip(latest["TeamName"], latest["TeamColor"])}
+    assert {t: c.upper() for t, c in TEAM_COLORS.items()} == official

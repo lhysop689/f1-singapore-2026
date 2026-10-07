@@ -80,10 +80,3 @@ def robustness():
     out = pd.DataFrame(ranks)
     out.index.name = "Team"
     return out.sort_values(out.columns[0])
-
-
-def team_colors():
-    """Official 2026 team colours from the timing data (latest round in scope)."""
-    res = load("results", {"R"})
-    latest = res[res["Round"] == res["Round"].max()]
-    return {t: f"#{c}" for t, c in zip(latest["TeamName"], latest["TeamColor"])}

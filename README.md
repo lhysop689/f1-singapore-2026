@@ -97,6 +97,7 @@ f1-singapore-2026/
 ├── src/
 │   ├── metrics.py             the three trait definitions
 │   ├── scoring.py             min-max scoring and robustness scenarios
+│   ├── palette.py             one colour palette: official team colours + neutral greys
 │   └── plotting.py            figures (matplotlib + seaborn)
 ├── tests/test_metrics.py      hand checks against known 2026 results
 ├── notebooks/sanity_checks.ipynb  the checks behind each analysis decision
