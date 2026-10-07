@@ -1,7 +1,7 @@
 """The five report figures (matplotlib + seaborn). Each is saved as a PNG in
 reports/figures/ and answers one question:
 
-  fig1  Who has the best Singapore profile, and which traits drive it?
+  fig1  Which teams are best suited to Marina Bay, and which traits drive it?
   fig2  Where is each team strong or weak?
   fig3  How large are the measured gaps, and how certain?
   fig4  Does the ranking depend on our analysis choices?
@@ -53,10 +53,10 @@ def save(fig, name, despine=True):
     plt.close(fig)
 
 
-# --- Figure 1: overall score, split by trait --------------------------------------------
+# --- Figure 1: suitability score, split by trait --------------------------------------------
 
-def fig1_overall(scores):
-    df = scores.sort_values("Overall score")
+def fig1_suitability(scores):
+    df = scores.sort_values("Suitability score")
     fig, ax = plt.subplots(figsize=(9, 6))
     for y, team in enumerate(df.index):
         left = 0.0
@@ -65,28 +65,28 @@ def fig1_overall(scores):
             ax.barh(y, part, left=left, height=0.66, edgecolor="white", linewidth=1.2,
                     color=pal.shade(pal.team_color(team), pal.TRAIT_SHADE[t]))
             left += part
-        ax.text(left + 1, y, f"{df.at[team, 'Overall score']:.0f}", va="center",
+        ax.text(left + 1, y, f"{df.at[team, 'Suitability score']:.0f}", va="center",
                 fontsize=10, fontweight="bold", color=pal.CARBON)
-    ax.set_yticks(range(len(df)), [f"{r}. {t}" for t, r in zip(df.index, df["Overall rank"])])
+    ax.set_yticks(range(len(df)), [f"{r}. {t}" for t, r in zip(df.index, df["Suitability rank"])])
     ax.set_xlim(0, 100)
-    ax.set_xlabel("Overall score (0–100): mean of the three trait scores")
+    ax.set_xlabel("Singapore suitability score (0–100): mean of the three trait scores")
     ax.grid(axis="y", visible=False)
     legend = [Patch(facecolor=pal.shade(pal.GREY_TEXT, pal.TRAIT_SHADE[t]), edgecolor="white", label=t)
               for t in TRAITS]
     ax.legend(handles=legend, title="Bar segments (shade of team colour)", title_fontsize=9,
               loc="lower right", frameon=True)
-    titles(fig, "Mercedes, Racing Bulls and Ferrari are almost level at the top; Cadillac trail far behind",
-           "Overall Singapore-suitability score by team, in team colours. Each bar is split into the share "
+    titles(fig, "Mercedes, Racing Bulls and Ferrari are the best suited to Marina Bay; Cadillac the least",
+           "Singapore suitability score by team, in team colours. Each bar is split into the share "
            "contributed by each trait.")
-    save(fig, "fig1_overall_score.png")
+    save(fig, "fig1_suitability_score.png")
 
 
 # --- Figure 2: score heatmap ----------------------------------------------------------------
 
 def fig2_heatmap(scores):
-    cols = [f"{t}: score" for t in TRAITS] + ["Overall score"]
+    cols = [f"{t}: score" for t in TRAITS] + ["Suitability score"]
     data = scores[cols].copy()
-    data.columns = ["Position\nretention", "Slow-corner\nspeed", "Tyre\nwear", "Overall"]
+    data.columns = ["Position\nretention", "Slow-corner\nspeed", "Tyre\nwear", "Suitability"]
     fig, ax = plt.subplots(figsize=(7.8, 6.5))
     sns.heatmap(data, annot=False, cmap=pal.SCORE_CMAP, vmin=0, vmax=100, linewidths=1.5,
                 linecolor="white", cbar_kws={"label": "Score (0 = worst team, 100 = best team)"}, ax=ax)
@@ -94,14 +94,14 @@ def fig2_heatmap(scores):
         for j, col in enumerate(data.columns):
             v = data.iat[i, j]
             ax.text(j + 0.5, i + 0.5, f"{v:.0f}", ha="center", va="center", fontsize=10,
-                    color=pal.text_on(v), fontweight="bold" if col == "Overall" else "normal")
+                    color=pal.text_on(v), fontweight="bold" if col == "Suitability" else "normal")
         # team colour chip beside the name
         ax.add_patch(Rectangle((-0.2, i + 0.18), 0.12, 0.64, color=pal.team_color(team),
                                clip_on=False, transform=ax.transData))
     ax.axvline(3, color="white", linewidth=6)
     ax.tick_params(axis="y", pad=16)
     ax.set_xlabel("Trait")
-    ax.set_ylabel("Team (sorted by overall score)")
+    ax.set_ylabel("Team (sorted by suitability score)")
     ax.tick_params(axis="x", rotation=0)
     titles(fig, "Most leading teams have one weak trait",
            "Score on each trait. Racing Bulls and Red Bull are weak in slow corners, Ferrari in tyre wear.")
@@ -111,7 +111,7 @@ def fig2_heatmap(scores):
 # --- Figure 3: measured values with uncertainty ------------------------------------------
 
 def fig3_measured(scores):
-    order = scores.sort_values("Overall score").index
+    order = scores.sort_values("Suitability score").index
     colors = [pal.team_color(t) for t in order]
     panels = {
         "Position retention": ("Places gained vs expected per race", "better →", 0, "0 = as expected from grid slot"),
@@ -161,11 +161,11 @@ def fig4_robustness(ranks):
     ax.set_yticks(range(1, len(ranks) + 1))
     ax.set_ylim(len(ranks) + 0.6, 0.4)
     ax.set_xlim(-1.6, len(xs) - 1 + 1.6)
-    ax.set_ylabel("Overall rank (1 = best)")
+    ax.set_ylabel("Suitability rank (1 = best suited)")
     ax.set_xlabel("Analysis choice (shaded column = published result)")
     ax.grid(axis="x", visible=False)
     titles(fig, "The top three stay in the top four, and the bottom three stay bottom, under every alternative",
-           "Overall rank when one analysis choice is changed at a time. Lines in team colours; "
+           "Suitability rank when one analysis choice is changed at a time. Lines in team colours; "
            "dashed or dotted lines separate teams with similar colours.")
     save(fig, "fig4_robustness.png")
 
@@ -222,7 +222,7 @@ def fig5_tyre_example():
 
 def make_all(scores, ranks):
     setup_style()
-    fig1_overall(scores)
+    fig1_suitability(scores)
     fig2_heatmap(scores)
     fig3_measured(scores)
     fig4_robustness(ranks)

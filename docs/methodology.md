@@ -8,7 +8,7 @@ This document defines every number in the project. The settings it refers to liv
 3. [Metrics](#3-metrics)
 4. [Scoring](#4-scoring)
 5. [Robustness](#5-robustness)
-6. [Pre-registered post-race test](#6-pre-registered-post-race-test)
+6. [Pre-registered test](#6-pre-registered-test)
 7. [Limitations](#7-limitations)
 8. [Decision log](#8-decision-log)
 
@@ -16,12 +16,12 @@ This document defines every number in the project. The settings it refers to liv
 
 ## 1. Question and scope
 
-**Question:** based on their 2026 season so far, which teams have the strongest profile for the Singapore Grand Prix (Marina Bay, Oct 9–11, 2026)?
+**Question:** which 2026 teams have the car traits that Marina Bay rewards, and do those teams outperform their usual level at the Singapore Grand Prix (Oct 9–11, 2026)?
 
-**What the analysis is:**
-- **Descriptive.** Each team is scored on three traits that Singapore rewards; it is not a race prediction model.
+**Approach:**
+- **Traits, measured relative to the field.** Each team is scored on three traits that Marina Bay rewards. Each trait compares a team with the rest of the field (or with cars starting from the same grid slots), so together they describe how well a car fits Singapore's demands. They combine into a **Singapore suitability score**.
 - **Team-level.** Both drivers share the car, and the traits mostly come from the car.
-- **Under an information cutoff.** Only data from rounds 1–16, all completed before Singapore (round 17), is used. The scores are frozen publicly before the event and then tested against the actual result (section 6).
+- **Information cutoff.** Only data from rounds 1–16, all completed before Singapore (round 17), is used. The scores are frozen publicly before the event and then tested against each team's result relative to its own season average (section 6).
 
 **Why these three traits:**
 
@@ -151,8 +151,8 @@ Tyre strategy (which tyres to use and when to pit) is a set of team decisions an
 ## 4. Scoring
 
 ```
-Trait score   = 100 × (team value − worst team value) / (best team value − worst team value)
-Overall score = mean of the three trait scores (equal weights)
+Trait score                 = 100 × (team value − worst team value) / (best team value − worst team value)
+Singapore suitability score = mean of the three trait scores (equal weights)
 ```
 The best team on each trait scores 100, the worst 0, and the rest in proportion to their measured value.
 
@@ -172,13 +172,13 @@ The best team on each trait scores 100, the worst 0, and the rest in proportion 
 | Position retention | ~55% |
 | Tyre wear | ~39% |
 
-**Overlap between traits:** Spearman correlations between the three traits are 0.32–0.52, so each adds information and the overall score does not count one trait twice.
+**Overlap between traits:** Spearman correlations between the three traits are 0.32–0.52, so each adds information and the suitability score does not count one trait twice.
 
 ---
 
 ## 5. Robustness
 
-Each analysis choice was changed one at a time and the overall ranking recomputed (`reports/tables/robustness.csv`, [Figure 4](../reports/figures/fig4_robustness.png)):
+Each analysis choice was changed one at a time and the suitability ranking recomputed (`reports/tables/robustness.csv`, [Figure 4](../reports/figures/fig4_robustness.png)):
 
 | Alternative | What changes |
 |---|---|
@@ -195,15 +195,24 @@ Each analysis choice was changed one at a time and the overall ranking recompute
 
 ---
 
-## 6. Pre-registered post-race test
+## 6. Pre-registered test
 
-Written before the race. Results will be reported whatever they show.
+Fixed before the race (Oct 8). The result will be reported whatever it shows.
 
-- **Team result** for each Singapore session (Sprint on Oct 10, Grand Prix on Oct 11): the mean finishing position of the team's two cars, with a non-classified car counted as 22nd.
-- **Test A:** Spearman rank correlation between the pre-race overall score and the team result, separately for the Sprint and the Grand Prix.
-- **Test B:** each trait recomputed on the Singapore sessions alone, correlated with that trait's pre-race score.
+```
+Team finish (a session)      = mean finishing position of the team's two cars;
+                               a car not classified counts as 22nd
+Season baseline              = mean Team finish over the same session type in rounds 1–16
+                               (Grands Prix for the Grand Prix, Sprints for the Sprint)
+Singapore over-performance   = Season baseline − Team finish at Singapore
+Test                         = Spearman rank correlation (ρ) between the suitability score
+                               and Singapore over-performance across the 11 teams
+```
+**Sign convention:** positive over-performance means a team finished better than its 2026 average. A **positive ρ** means the best-suited teams beat their usual level, which is what the suitability score claims.
 
-With 11 teams and one race weekend this is a directional check: |ρ| needs to be about 0.6 before it means much. A weak match would not prove the method wrong, and a strong one would not prove it right.
+**Sessions:** the test is run separately for the Singapore Sprint (Oct 10) and the Grand Prix (Oct 11). If a session is red-flagged before completion or declared wet, it is reported but marked as such.
+
+**Interpretation:** with 11 teams and one race weekend, ρ needs to be at least about 0.54 to be distinguishable from chance (one-sided test, 5% level). Smaller positive values are read as directional support only.
 
 ---
 
@@ -247,3 +256,5 @@ With 11 teams and one race weekend this is a directional check: |ρ| needs to be
 | Oct 6 | Grid-adjusted position retention | Raw places gained; places lost only (both track grid position) |
 | Oct 6 | Q1 / SQ1 laps for slow-corner speed | Whole-session fastest lap (tested in section 5) |
 | Oct 6 | Min-max scoring, equal weights | Rank, z-score, uncertainty-shrunk scores (tested in section 5) |
+| Oct 7 | Question framed as suitability (traits Marina Bay rewards, relative to the field); score named "Singapore suitability score" | Framing as "strongest team at Singapore", which the traits do not measure |
+| Oct 7 | Single pre-registered test: suitability vs Singapore over-performance against each team's own season average | Correlating with raw finishing order, which mostly reflects overall car pace |

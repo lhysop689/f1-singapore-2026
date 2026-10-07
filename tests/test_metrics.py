@@ -96,7 +96,7 @@ def test_scores_span_0_to_100_and_overall_is_the_mean():
     traits = [f"{t}: score" for t in config.METRICS]
     for col in traits:
         assert s[col].min() == pytest.approx(0) and s[col].max() == pytest.approx(100)
-    assert np.allclose(s["Overall score"], s[traits].mean(axis=1))
+    assert np.allclose(s["Suitability score"], s[traits].mean(axis=1))
     assert len(s) == 11
 
 

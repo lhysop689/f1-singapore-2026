@@ -2,8 +2,8 @@
 
 Writes:
   reports/tables/team_scores.csv   value, standard error, n, rank and score per
-                                   metric, plus the overall score and rank
-  reports/tables/robustness.csv    overall rank under each alternative choice
+                                   trait, plus the suitability score and rank
+  reports/tables/robustness.csv    suitability rank under each alternative choice
 """
 import sys
 from pathlib import Path
@@ -24,7 +24,7 @@ def main():
     ranks.to_csv(config.TABLES_DIR / "robustness.csv")
 
     pd.set_option("display.width", 200)
-    show = scores[[c for c in scores.columns if c.endswith("score")] + ["Overall rank"]].round(0)
+    show = scores[[c for c in scores.columns if c.endswith("score")] + ["Suitability rank"]].round(0)
     print(show.to_string())
 
 

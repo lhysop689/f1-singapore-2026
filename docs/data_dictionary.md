@@ -39,9 +39,9 @@ For each trait (`Position retention`, `Slow-corner speed`, `Tyre wear`) there ar
 | `: rank` | 1 = best team on this trait |
 | `: score` | 0–100 (min-max: best team = 100, worst = 0) |
 
-Plus `Overall score` (mean of the three trait scores) and `Overall rank`.
+Plus `Suitability score` (Singapore suitability score: mean of the three trait scores) and `Suitability rank`.
 
-### `robustness.csv`: overall rank under each alternative choice
+### `robustness.csv`: suitability rank under each alternative choice
 
 One column per scenario: `Published (min-max)`, `Rank-based scoring`, `Z-score scoring`, `Without Sprints`, `Mixed-weather GPs included`, `Whole-session quali laps`. See [methodology §5](methodology.md#5-robustness).
 
