@@ -1,6 +1,6 @@
 # Methodology
 
-This document defines every number in the project. The settings it refers to live in [`config.py`](../config.py), and the code in [`src/metrics.py`](../src/metrics.py) and [`src/scoring.py`](../src/scoring.py). It is frozen with the scores in the `pre-race-snapshot` release on Oct 8, 2026, before the first Singapore session.
+This document defines every number in the project. The settings it refers to live in [`config.py`](../config.py), and the code in [`src/metrics.py`](../src/metrics.py) and [`src/scoring.py`](../src/scoring.py). It is frozen with the scores in the `pre-race-snapshot` release on Oct 9, 2026, before the first Singapore session (Practice 1, 08:30 UTC).
 
 **Contents:**
 1. [Question and scope](#1-question-and-scope)
@@ -197,7 +197,7 @@ Each analysis choice was changed one at a time and the suitability ranking recom
 
 ## 6. Pre-registered test
 
-Fixed before the race (Oct 8). The result will be reported whatever it shows.
+Fixed before the first Singapore session (Oct 9). The result will be reported whatever it shows.
 
 ```
 Team finish (a session)      = mean finishing position of the team's two cars;

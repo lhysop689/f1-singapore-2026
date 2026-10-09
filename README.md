@@ -10,7 +10,7 @@ Marina Bay rewards a particular set of car traits: holding track position on a c
 | Teams | 11 |
 | Data analysed | 20,527 race laps · 718 tyre stints · 386 driver-races · 3,333 telemetry corner readings |
 | Data source | [FastF1](https://docs.fastf1.dev) (official F1 timing data) |
-| Scores frozen | Oct 8, 2026: GitHub Release `pre-race-snapshot`, before the first Singapore session |
+| Scores frozen | Oct 9, 2026, before the first Singapore session (Practice 1, 08:30 UTC): GitHub Release [`pre-race-snapshot`](../../releases/tag/pre-race-snapshot) |
 
 ---
 
